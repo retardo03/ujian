@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>madding</title>
+    <style> 
+        table,td,th{
+         border:1px solid black;
+         border-collapse: collapse;
+         padding: 15px;
+     }      table{
+         margin: 0 auto;
+         text-align:center;
+         }
+ </style>
+</head>
+<body>
+    <center id='loginregister'>
+        <h1>madding</h1>
+        username: <input type="text" id="username" placeholder="masukan username"><br><br>
+        password: <input type="password" id="password" placeholder="masukan password"><br><br>
+        <button onclick="login()">login</button>
+        <br><br>
+        <table> 
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Nama Kegiatan</th>
+                    <th>Gambar</th>
+                    <th>Hari</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id=body>
+               
+            </tbody>
+            <tfoot id=foot>
+               
+            </tfoot>       
+        </table>
+    </center>    
+</body>
+<script>
+    class user{
+        constructor(username,password,role){
+            this.username=username,
+            this.password=password,
+            this.role=role
+        }
+    }
+    class list{
+        constructor(kegiatan,hari,gambar){
+            this.kegiatan=kegiatan,
+            this.hari=hari,
+            this.gambar=gambar
+        }
+    }
+    var datauser=[
+      new user('admin','123','admin'),
+      new user('aldo','234','user')
+    ]
+    var listdata=[
+        new list('lari','senin','https://www.femina.co.id/images/images/PERSIAPAN%20LARI.jpg'),
+        new list('shopping','selasa','https://www.parkgrandpaddingtoncourt.co.uk/blog/wp-content/uploads/2017/10/Shopping.jpg')
+    ]
+    var datauserlogin = {}
+    const login=()=>{
+        var user=document.getElementById('username').value
+        var password=document.getElementById('password').value
+        var login=0
+        for (var i=0;i<datauser.length;i++){
+            if(user=datauser[i].username && password==datauser[i].password){
+                login=true
+                datauserlogin=datauser[i]
+            if(datauserlogin.role=='admin'){
+                document.getElementById('body').innerHTML=`
+                <tbody>
+               </tbody>`
+               document.getElementById('foot').innerHTML=`
+               <tfoot>
+                
+                    <td></td>
+                    <td><input type="text" class="additem"></td>
+                    <td>
+                        <select class="additem">
+                            <option>senin</option>
+                            <option>selasa</option>
+                            <option>rabu</option>
+                            <option>kamis</option>
+                            <option>jumat</option>
+                            <option>sabtu</option>
+                            <option>minggu</option>
+                            </select>
+                            </td>
+                            <td><input type="text" class="additem"></td>
+                            <td><button onclick="onadditemclick()">add todo</button></td>
+                  
+                            </tr>
+                            </tfoot>
+                            </table>
+                            <br>
+                            <button onclick='logout()'>logout</button>
+                            `
+                    printdata(listdata)
+            }else{
+                document.getElementById('body').innerHTML=`
+                <tbody>
+               </tbody>`
+               document.getElementById('foot').innerHTML=`
+               <tfoot>
+                
+                    <td></td>
+                    <td></td>
+                    <tr>
+                          </tr>
+                            </tfoot>
+                            </table>
+                            <br>
+                            <button onclick='logout()'>logout</button>
+                            `
+                    printdata1(listdata)       
+                }
+            }
+        }
+    }
+    function printdata(){
+        var output=''
+        listdata.forEach((val,index)=>{
+            output+=`   <tr>
+                            <td>${index+1}</td>
+                            <td>${val.kegiatan}</td>
+                            <td><img src=${val.gambar} alt=${val.kegiatan} height='200px'></td>
+                            <td>${val.hari}</td>
+                            <td>
+                                <button onclick="editkegiatan(${index})">edit</button>
+                                <button onclick="deletekegiatan(${index})">delete</button>
+                            </td>
+                        </tr>`
+        })
+        document.getElementsByTagName('tbody')[0].innerHTML=output
+    }
+    function printdata1(){
+        var output=''
+        listdata.forEach((val,index)=>{
+            output+=`   <tr>
+                            <td>${index+1}</td>
+                            <td>${val.kegiatan}</td>
+                            <td><img src=${val.gambar} alt=${val.kegiatan} height='200px'></td>
+                            <td>${val.hari}</td>
+                            <td>
+                            </td>
+                        </tr>`
+        })
+        document.getElementsByTagName('tbody')[0].innerHTML=output
+    }
+    const logout=()=>{
+        var konfirmlogout= confirm('anda yakin ?')
+        if(konfirmasilogout){
+            document.getElementById("body")=''
+            document.getElementById('foot')=''
+            document.getElementById('username')=''
+            document.getElementById('password')=''
+        }
+    }
+var indexedit = -1
+var inddexdel = -2
+const print = (a) => {
+    var output = ''
+    a.forEach((val, index) => {
+        if (index == indexedit) {
+            output +=   `<tr>
+                            <td>${index + 1}</td>
+                            <td><input type="text" id="edititem${index}"></td>
+                            <td>
+                                <select id="edithari${index}">
+                                    <option> Senin</option>
+                                    <option> Selasa</option>
+                                    <option> Rabu</option>
+                                    <option> Kamis</option>
+                                    <option> Jumat</option>
+                                </select>    
+                            </td>                            
+                            <td><input type="text" id="editimg${index}"></td>
+                            <td><button onclick="cancel()">cancel</button><button onclick="save(${index})">save</button></td>
+                        </tr>`
+        } else if (index == inddexdel) {
+            output += `<tr>
+                            <td>${index + 1}</td>
+                            <td>${val.kegiatan}</td>
+                            <td>${val.hari}</td>
+                            <td><img src=${val.gambar} height='100px'/></td>
+                            <td><button onclick="cancelDel()">No</button><button onclick="confirmDel(${index})">Yes</button></td>
+                        </tr>`
+        } else {
+            output += `<tr>
+                            <td>${index + 1}</td>
+                            <td>${val.kegiatan}</td>
+                            <td>${val.hari}</td>
+                            <td><img src=${val.gambar} height='100px'/></td>
+                            <td>
+                                <button onclick="hapus(${index})">delete</button>
+                                <button onclick="edit(${index})">edit</button>
+                            </td>
+                        </tr>`
+
+        }
+    });
+    document.getElementsByTagName('tbody')[0].innerHTML = output
+}
+
+const hapus = (bebas) => {
+    inddexdel = bebas
+    print(listdata)
+}
+const canceldel = () => {
+    inddexdel = -2
+    print(listdata)
+}
+const confirmdel = (bebas) => {
+    listdata.splice(bebas, 1)
+    inddexdel = -1
+    print(listdata)
+}
+const edit = (bebas) => {
+    indexedit = bebas
+    print(listdata)
+}   
+
+const cancel = () => {
+    indexedit = -1
+    print(listdata)
+}
+
+const save = (bebas) => {
+    var newitem = document.getElementById(`editkegiatan${bebas}`).value
+    var newhari = document.getElementById(`edithari${bebas}`).value
+    var newimg = document.getElementById(`editgambar${bebas}`).value
+    if (newitem) {
+        listdata[bebas].kegiatan = newitem
+    }
+    if (newhari !== listdata[bebas].hari) {
+        listdata[bebas].hari = newhari
+    }
+    if (newgambar) {
+        listdata[bebas].gambar = newimg
+    }
+    indexedit = -1
+    print(listdata)
+}
+
+const onadditemclick = () => {
+    var input = document.getElementsByClassName('additem')
+    var itembaru = input[0].value
+    var haribaru = input[1].value
+    var imagebaru = input[2].value
+    listdata.push(new List(itembaru, haribaru, imagebaru))
+    print(listdata)
+}
+
+
+</script>
+</html>
